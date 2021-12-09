@@ -8,7 +8,7 @@ An efficient and secured alternative of Google Captcha for ASP.NET Core and ASP.
 ```
   Install-Package System.Drawing.Common
 ```
-* Enable session in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change session timeout if you want. It uses to store `Captcha` in the user session securely.
+* Enable session in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
 ```C#
   services.AddSession(options =>
             {
