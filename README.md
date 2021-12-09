@@ -6,7 +6,7 @@ An efficient and secured alternative of Google Captcha for ASP.NET Core and ASP.
 # How to use
 * This project uses `Bitmap` to create a temporary image of random characters. In order to do that, you need to add `System.Drawing.Common` to your project. Use the command below to install it from `Nuget`:
 ```
-Install-Package System.Drawing.Common
+  Install-Package System.Drawing.Common
 ```
 * Enable session in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change session timeout if you want. It uses to store `Captcha` in the user session securely.
 ```C#
