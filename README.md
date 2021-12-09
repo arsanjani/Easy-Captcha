@@ -1,5 +1,5 @@
 # Easy Captcha
-An efficient and secured alternative of Google Captcha for ASP.NET Core and ASP.NET MVC which has been written by C#. If you are being tired of struggling with Google Captcha and also worried about performance and banning issue with it, just take a minute to go through it for your consideration. I am certain that you won't be regret.
+An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and ASP.NET MVC which has been written by C#. If you are being tired of struggling with Google reCAPTCHA and also worried about performance and banning issue with it, just take a minute to go through it for your consideration. I am certain that you won't be regret.
 
 ![Easy Captcha](/EasyCaptcha/wwwroot/img/easyCaptcha.PNG)
 
