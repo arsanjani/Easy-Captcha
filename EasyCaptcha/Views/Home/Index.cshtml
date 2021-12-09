@@ -1,0 +1,30 @@
+﻿@model EasyCaptcha.Models.CaptchaModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <div class="text-center">
+            <h1 class="display-4">Easy Captcha!</h1>
+            <img id="imgCaptcha" src="~/Captcha" alt="Captcha" style="padding-bottom:10px;cursor: pointer;" onclick="refreshImage(this);" />
+            <input type="text" asp-for="Captcha" class="form-control" placeholder="Captcha..." style="width:200px;margin:auto" />
+            <br />
+            <label>@Model.Message</label>
+            <br />
+            <input type="submit" value="Create" class="btn btn-primary" id="submit" />
+        </div>
+     </div>
+        }
+        <script type="text/javascript">
+            refreshImage = function (img) {
+                var source = img.src;
+                img.src = '';
+
+                source = source.split('?')[0];
+                source = source + '?' + new Date().getTime();
+
+                img.src = source;
+            }
+        </script>
