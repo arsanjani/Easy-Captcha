@@ -37,3 +37,4 @@ An efficient and secured alternative of Google Captcha for ASP.NET Core and ASP.
             }
   </script>
   ```
+* You can change the `Captcha` length, forecolor, background color, add more noisy line to make it more complicated, and so on so forth very easily in `CaptchaController.cs`.
