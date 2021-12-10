@@ -5,16 +5,16 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
 
 # How to use
 * This project uses `Bitmap` to create a temporary image of random characters. In order to do that, you need to add `System.Drawing.Common` to your project. Use the command below to install it from `Nuget`:
-```
+  ```
   Install-Package System.Drawing.Common
-```
+  ```
 * Enable session in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
-```C#
+  ```C#
   services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
             });
-```            
+  ```            
 * Copy `CaptchaController.cs` to your project.
 * Use the code below in your `View Layout`:
   ```HTML
@@ -36,5 +36,18 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
                 img.src = source;
             }
   </script>
+  ```
+* Use the code below to compare the real `Captcha` with the user input:
+  ```C#
+  [HttpPost]
+  public ActionResult Index(CaptchaModel model)
+  {
+      var realCaptcha = HttpContext.Session.GetString("captcha").ToLower();
+      if (realCaptcha != model.Captcha)
+          model.Message = "Ops...Wrong captcha!";
+      else
+          model.Message = "Congrats! Captcha has been matched!";
+      return View(model);
+  }
   ```
 * You can change the `Captcha` length, forecolor, background color, add more noisy line to make it more complicated, and so on so forth very easily in `CaptchaController.cs`.
