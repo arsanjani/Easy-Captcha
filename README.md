@@ -9,6 +9,7 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
   Install-Package System.Drawing.Common
   ```
 * Enable session in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
+
   ```C#
   services.AddSession(options =>
             {
@@ -17,10 +18,12 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
   ```            
 * Copy `CaptchaController.cs` to your project.
 * Use the code below in your `View Layout`:
+
   ```HTML
   <img src="~/Captcha" alt="Captcha" />
   ```
 * In order to randomly change the `Captcha` text by clicking on it, you can use the code below:
+
   ```HTML
   <img src="~/Captcha" alt="Captcha" style="cursor: pointer;" onclick="refreshImage(this);" />
   ```
@@ -38,6 +41,7 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
   </script>
   ```
 * Use the code below to compare the real `Captcha` with the user input:
+
   ```C#
   [HttpPost]
   public ActionResult Index(CaptchaModel model)
