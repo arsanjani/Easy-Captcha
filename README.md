@@ -54,4 +54,23 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
       return View(model);
   }
   ```
+* You can change the length of the captcha by the code below:
+  ```HTML
+  <img src="~/Captcha?l=6" alt="Captcha" />
+  ```
+* You can change the background color of the captcha by the code below either by writting the color name or the keyword `random`. (Default is `transparent`):
+  ```HTML
+  <img src="~/Captcha?bc=black" alt="Captcha" />
+  ```  
+  ```HTML
+  <img src="~/Captcha?bc=random" alt="Captcha" />
+  ```  
+* You can change the forecolor of the captcha by the code below either by writting the color name or the keyword `random`. (Default is `random`):
+  ```HTML
+  <img src="~/Captcha?fc=green" alt="Captcha" />
+  ```
+* You can change type of the characters. `num` for numeric characters or `mix` for mixed characters. (Default is `mix`):
+  ```HTML
+  <img src="~/Captcha?t=num" alt="Captcha" />
+  ```
 * You can change the `Captcha` length, forecolor, background color, add more noisy line to make it more complicated, and so on so forth very easily in `CaptchaController.cs`.
