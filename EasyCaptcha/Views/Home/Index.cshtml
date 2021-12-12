@@ -22,8 +22,11 @@
                 var source = img.src;
                 img.src = '';
 
-                source = source.split('?')[0];
-                source = source + '?' + new Date().getTime();
+                source = source.split('&date')[0];
+                if (source.indexOf("?") == -1)
+                    source = source + '?date=' + new Date().getTime();
+                else
+                    source = source + '&date=' + new Date().getTime();
 
                 img.src = source;
             }

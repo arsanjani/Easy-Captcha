@@ -15,19 +15,29 @@ namespace EasyCaptcha.Controllers
     [AllowAnonymous]
     public class CaptchaController : Controller
     {
+        private string _backgroundColor, _forecolor, _type;
+        private int _length;
         /// <summary>
         /// Retuns a random Captcha as a bitmap
         /// You can change Captcha length here if you want.
         /// </summary>
+        /// <param name="l">Length of the captcha. Default is 5</param>
+        /// <param name="bc">Background color of the captcha. Default is Transparent. You can use random value</param>
+        /// <param name="fc">Forecolor of the texts. You can use random value</param>
+        /// <param name="t">mix: combination of numbers & chars, num: just numbers </param>
         /// <returns></returns>
-        public IActionResult Index()
+        public IActionResult Index(int l = 5, string bc = "Transparent", string fc = "random", string t = "mix")
         {
+            _backgroundColor = bc;
+            _forecolor = fc;
+            _type = t;
+            _length = l;
             Random autoRand = new Random();
             string randomStr = "";
-            char[] myArray = new char[5];
+            char[] myArray = new char[l];
             int x;
 
-            for (x = 0; x < 5; x++)
+            for (x = 0; x < l; x++)
             {
                 myArray[x] = RandomChar(autoRand);
                 randomStr += myArray[x].ToString();
@@ -47,8 +57,17 @@ namespace EasyCaptcha.Controllers
         private char RandomChar(Random autoRand)
         {
             char c = '0';
-
-            switch (autoRand.Next(1, 4))
+            int start, end;
+            if (_type == "mix")
+            {
+                start = 1;
+                end = 4;
+            } else //if (_type == "num")
+            {
+                start = 1;
+                end = 2;
+            }
+            switch (autoRand.Next(start, end))
             {
                 case 1:
                     c = System.Convert.ToChar(autoRand.Next(49, 58));
@@ -68,51 +87,29 @@ namespace EasyCaptcha.Controllers
         }
 
         /// <summary>
-        /// Generate background color of Captcha randomly
-        /// </summary>
-        /// <param name="autoRand">Random generator class</param>
-        /// <returns></returns>
-        private Color RandomBackColor(Random autoRand)
-        {
-            switch (autoRand.Next(1, 6))
-            {
-                case 1:
-                    return Color.White;
-                case 2:
-                    return Color.LightBlue;
-                case 3:
-                    return Color.LightCyan;
-                case 4:
-                    return Color.LightGreen;
-                case 5:
-                    return Color.LightPink;
-                default:
-                    return Color.White;
-            }
-        }
-        /// <summary>
         /// Generate foreground color of Captcha randomly
         /// </summary>
         /// <param name="autoRand">Random generator class</param>
         /// <returns></returns>
-        private Color RandomForeColor()
+        private Color RandomforeColor()
+        {
+            if (_forecolor != "random")
+                return Color.FromName(_forecolor);
+            return RandomColor();
+        }
+
+        private Color RandomColor()
         {
             Random autoRand = new Random();
-            switch (autoRand.Next(1, 6))
+            return (autoRand.Next(1, 6)) switch
             {
-                case 1:
-                    return Color.Crimson;
-                case 2:
-                    return Color.Sienna;
-                case 3:
-                    return Color.SeaGreen;
-                case 4:
-                    return Color.Chocolate;
-                case 5:
-                    return Color.Black;
-                default:
-                    return Color.Brown;
-            }
+                1 => Color.Crimson,
+                2 => Color.Sienna,
+                3 => Color.SeaGreen,
+                4 => Color.Chocolate,
+                5 => Color.Black,
+                _ => Color.Brown,
+            };
         }
         /// <summary>
         /// Transparent background, you can change it if you want something else.
@@ -120,7 +117,9 @@ namespace EasyCaptcha.Controllers
         /// <returns>Color</returns>
         private Color RandomBackColor()
         {
-            return Color.Transparent;
+            if (_backgroundColor != "random")
+                return Color.FromName(_backgroundColor);
+            return RandomColor();
         }
 
         /// <summary>
@@ -134,7 +133,8 @@ namespace EasyCaptcha.Controllers
         private byte[] CreateCAPTCHAImage(string text, int width = 120, int height = 40, string fontFamily = "Arial")
         {
             //HttpContext objHttpContext = HttpContext.Current;
-
+            if (_length > 7)
+                width += width / 7 * (_length - 7);
 
 
             Bitmap objBitmap = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
@@ -156,7 +156,7 @@ namespace EasyCaptcha.Controllers
             objGraphicsPath.AddString(text, objFont.FontFamily, (int)objFont.Style, objFont.Size, objRectangle, objStringFormat);
 
 
-            SolidBrush objSolidBrushColor = new SolidBrush(RandomForeColor());
+            SolidBrush objSolidBrushColor = new SolidBrush(RandomforeColor());
             objGraphics.FillPath(objSolidBrushColor, objGraphicsPath);
             #region Distortion
 
