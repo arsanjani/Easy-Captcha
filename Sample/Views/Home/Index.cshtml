@@ -1,4 +1,5 @@
-﻿@model EasyCaptcha.Models.CaptchaModel
+﻿@using EasyCaptcha.Controllers
+@model EasyCaptcha.Models.CaptchaModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -8,7 +9,7 @@
     <div class="form-horizontal">
         <div class="text-center">
             <h1 class="display-4">Easy Captcha!</h1>
-            <img id="imgCaptcha" src="~/Captcha" alt="Captcha" style="padding-bottom:10px;cursor: pointer;" onclick="refreshImage(this);" />
+            <img id="imgCaptcha" src="~/Captcha?bc=random&l=5" alt="Captcha" style="padding-bottom:10px;cursor: pointer;" onclick="refreshImage(this);" />
             <input type="text" asp-for="Captcha" class="form-control" placeholder="Captcha..." style="width:200px;margin:auto" />
             <br />
             <label>@Model.Message</label>

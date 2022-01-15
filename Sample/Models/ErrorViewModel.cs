@@ -1,6 +1,6 @@
 using System;
 
-namespace EasyCaptcha.Models
+namespace Sample.Models
 {
     public class ErrorViewModel
     {

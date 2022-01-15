@@ -1,12 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>Mohsen Arsanjani</Authors>
+    <PackageId>EasyCaptchaCore</PackageId>
+    <Description>An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and ASP.NET MVC which has been written with C#. If you are being tired of struggling with Google reCAPTCHA and also worried about performance and banning issue with it, just take a minute to go through it for your consideration. I am certain that you won't be regret.</Description>
+    <PackageTags>CAPTCHA, reCAPTCHA</PackageTags>
+    <RepositoryUrl>https://github.com/arsanjani/Easy-Captcha</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <Version>1.0.0</Version>
+	<IsPackable>true</IsPackable>
+	<Copyright>Copyright (c) Arsanjani 2022</Copyright>
+	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+	<Title>Easy Captcha</Title>
+	<AssemblyVersion>1.0.0.0</AssemblyVersion>
+	<FileVersion>0.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.12" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
