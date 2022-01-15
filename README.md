@@ -14,11 +14,19 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
 ![c10](https://user-images.githubusercontent.com/8726637/149615900-5e02d9c0-aebd-4fe5-8455-f5977ae4baab.png)
 
 # How to use
-* This project uses `Bitmap` to create a temporary image of random characters. In order to do that, you need to add `System.Drawing.Common` to your project. Use the command below to install it from `Nuget`:
+* Install it from `Nuget`:
   ```
-  Install-Package System.Drawing.Common
+  Install-Package EasyCaptchaCore -Version 1.0.0
   ```
-* Enable session in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
+* Add `ICaptchaService` to your `Statrup` like this:
+  ```C#
+  services.AddTransient<ICaptchaService, CaptchaService>();
+  ```
+* Enable `Session` in `Configure` method like this:
+  ```C#
+  app.UseSession();
+  ```
+* Enable session `IdleTimeout` in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
 
   ```C#
   services.AddSession(options =>
@@ -26,7 +34,6 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
             });
   ```            
-* Copy `CaptchaController.cs` to your project.
 * Use the code below in your `View Layout`:
 
   ```HTML
@@ -64,7 +71,7 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
       return View(model);
   }
   ```
-* You can change the length of the captcha by the code below:
+* You can change the length of the captcha by the code below. (Default value is 5):
   ```HTML
   <img src="~/Captcha?l=6" alt="Captcha" />
   ```
@@ -83,4 +90,3 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
   ```HTML
   <img src="~/Captcha?t=num" alt="Captcha" />
   ```
-* You can change the `Captcha` length, forecolor, background color, add more noisy line to make it more complicated, and so on so forth very easily in `CaptchaController.cs`.
