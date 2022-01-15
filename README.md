@@ -1,7 +1,17 @@
 # Easy Captcha
 An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and ASP.NET MVC which has been written with C#. If you are being tired of struggling with Google reCAPTCHA and also worried about performance and banning issue with it, just take a minute to go through it for your consideration. I am certain that you won't be regret.
 
-![Easy Captcha](/EasyCaptcha/wwwroot/img/easyCaptcha.PNG)
+
+![c1](https://user-images.githubusercontent.com/8726637/149615831-226a2616-0a2c-4932-aaa9-61bdaed5cbd9.PNG)
+![c2](https://user-images.githubusercontent.com/8726637/149615840-5db002d1-4380-491a-b349-c3611e3a286c.PNG)
+![c3](https://user-images.githubusercontent.com/8726637/149615844-743957c5-4971-4176-8fac-d4bb9d622ab4.PNG)
+![c4](https://user-images.githubusercontent.com/8726637/149615876-27b9ca2c-efd2-452f-baf9-471ead380f51.PNG)
+![c5](https://user-images.githubusercontent.com/8726637/149615879-028c072e-6952-49ea-b108-745c4549d62b.PNG)
+![c6](https://user-images.githubusercontent.com/8726637/149615881-95277c22-4196-4915-8d9f-9ff06e167e69.PNG)
+![c7](https://user-images.githubusercontent.com/8726637/149615893-fd201df5-fa57-448e-ad99-c1e5a2d70bce.PNG)
+![c8](https://user-images.githubusercontent.com/8726637/149615897-7f6f9742-fabc-441f-b9c8-f5ba14b83a1e.png)
+![c9](https://user-images.githubusercontent.com/8726637/149615898-be83de38-9292-422d-89fc-112a8ec9f36c.png)
+![c10](https://user-images.githubusercontent.com/8726637/149615900-5e02d9c0-aebd-4fe5-8455-f5977ae4baab.png)
 
 # How to use
 * This project uses `Bitmap` to create a temporary image of random characters. In order to do that, you need to add `System.Drawing.Common` to your project. Use the command below to install it from `Nuget`:
@@ -53,5 +63,24 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
           model.Message = "Congrats! Captcha has been matched!";
       return View(model);
   }
+  ```
+* You can change the length of the captcha by the code below:
+  ```HTML
+  <img src="~/Captcha?l=6" alt="Captcha" />
+  ```
+* You can change the background color of the captcha by the code below either by writting the color name or the keyword `random`. (Default is `transparent`):
+  ```HTML
+  <img src="~/Captcha?bc=black" alt="Captcha" />
+  ```  
+  ```HTML
+  <img src="~/Captcha?bc=random" alt="Captcha" />
+  ```  
+* You can change the forecolor of the captcha by the code below either by writting the color name or the keyword `random`. (Default is `random`):
+  ```HTML
+  <img src="~/Captcha?fc=green" alt="Captcha" />
+  ```
+* You can change type of the characters. `num` for numeric characters or `mix` for mixed characters. (Default is `mix`):
+  ```HTML
+  <img src="~/Captcha?t=num" alt="Captcha" />
   ```
 * You can change the `Captcha` length, forecolor, background color, add more noisy line to make it more complicated, and so on so forth very easily in `CaptchaController.cs`.
