@@ -86,7 +86,7 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
   ```HTML
   <img src="~/Captcha?fc=green" alt="Captcha" />
   ```
-* You can change type of the characters. `num` for numeric characters or `mix` for mixed characters. (Default is `mix`):
+* You can change type of the characters. `num` for numeric characters or `mix` for alphanumeric characters. (Default is `mix`):
   ```HTML
   <img src="~/Captcha?t=num" alt="Captcha" />
   ```
