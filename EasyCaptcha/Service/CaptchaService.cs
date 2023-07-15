@@ -135,7 +135,17 @@ namespace EasyCaptcha.Service
             SolidBrush objSolidBrushColor = new SolidBrush(GetColor(foreColor));
             objGraphics.FillPath(objSolidBrushColor, objGraphicsPath);
             #region Distortion
-
+            //this code add ten random line in captcha image
+             Random rnd = new Random();
+            for (int i = 0; i < 10; i++)
+            {
+                // calculate line start and end point here using the Random class:
+                int x0 = rnd.Next(0, width);
+                int y0 = rnd.Next(0, height);
+                int x1 = rnd.Next(0, width);
+                int y1 = rnd.Next(0, height);
+                objGraphics.DrawLine(Pens.Gray, x0, y0, x1, x1);
+            }
             double distort = new Random().Next(3, 6) * (new Random().Next(3) == 1 ? 1 : -1);
             using (Bitmap copy = (Bitmap)objBitmap.Clone())
             {
