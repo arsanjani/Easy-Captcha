@@ -1,5 +1,5 @@
 # Easy Captcha
-An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and ASP.NET MVC which has been written with C#. If you are being tired of struggling with Google reCAPTCHA and also worried about performance and banning issue with it, just take a minute to go through it for your consideration. I am certain that you won't be regret.
+An efficient and secured alternative of Google reCAPTCHA for ASP.NET which has been written with C#. If you are being tired of struggling with Google reCAPTCHA and also worried about performance and banning issue with it, just take a minute to go through it for your consideration. I am certain that you won't be regret.
 
 
 ![c1](https://user-images.githubusercontent.com/8726637/149615831-226a2616-0a2c-4932-aaa9-61bdaed5cbd9.PNG)
@@ -26,7 +26,7 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
   ```C#
   app.UseSession();
   ```
-* Enable session `IdleTimeout` in your `ConfigureServices` If you are using `.NET Core` or `MVC`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
+* Enable session `IdleTimeout` in your `ConfigureServices`. You can change the session timeout if you want. It uses to store the `Captcha` in the user session securely.
 
   ```C#
   services.AddSession(options =>
