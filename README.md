@@ -16,7 +16,7 @@ An efficient and secured alternative of Google reCAPTCHA for ASP.NET Core and AS
 # How to use
 * Install it from `Nuget`:
   ```
-  Install-Package EasyCaptchaCore -Version 1.0.0
+  Install-Package EasyCaptchaCore -Version 1.0.1
   ```
 * Add `ICaptchaService` to your `Statrup` like this:
   ```C#
