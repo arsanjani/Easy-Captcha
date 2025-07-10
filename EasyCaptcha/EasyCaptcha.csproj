@@ -8,13 +8,13 @@
     <PackageTags>CAPTCHA, reCAPTCHA</PackageTags>
     <RepositoryUrl>https://github.com/arsanjani/Easy-Captcha</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>1.0.1</Version>
+    <Version>2.0.0</Version>
 	<IsPackable>true</IsPackable>
-	<Copyright>Copyright (c) Arsanjani 2022</Copyright>
+	<Copyright>Copyright (c) Arsanjani 2025</Copyright>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	<Title>Easy Captcha</Title>
-	<AssemblyVersion>1.0.0.0</AssemblyVersion>
-	<FileVersion>0.0.0.0</FileVersion>
+	<AssemblyVersion>2.0.0.0</AssemblyVersion>
+	<FileVersion>2.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
