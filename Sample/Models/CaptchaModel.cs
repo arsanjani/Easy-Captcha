@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace EasyCaptcha.Models
+namespace Sample.Models;
+
+public class CaptchaModel
 {
-    public class CaptchaModel
-    {
-        public string Captcha { get; set; }
-        public string Message { get; set; }
-    }
+    [Required(ErrorMessage = "Please enter the captcha text")]
+    [Display(Name = "Captcha")]
+    public string Captcha { get; set; } = string.Empty;
+    
+    public string Message { get; set; } = string.Empty;
 }

@@ -1,177 +1,216 @@
 ﻿using EasyCaptcha.Enum;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Numerics;
 
-namespace EasyCaptcha.Service
+namespace EasyCaptcha.Service;
+
+public class CaptchaService : ICaptchaService
 {
-    public class CaptchaService: ICaptchaService
+    private static readonly FontCollection FontCollection = new();
+    private static readonly FontFamily DefaultFontFamily = SystemFonts.Get("Arial");
+
+    public string GenerateRandomString(int length, CharType type)
     {
-        public string GenerateRandomString(int length, CharType type)
+        if (length < 1)
+            return string.Empty;
+        
+        var stringBuilder = new System.Text.StringBuilder(length);
+        
+        for (int i = 0; i < length; i++)
         {
-            if (length < 1)
-                return string.Empty;
-            Random autoRand = new Random();
-            string randomStr = "";
-            char[] myArray = new char[length];
-            int x;
-
-            for (x = 0; x < length; x++)
-            {
-                myArray[x] = RandomChar(autoRand, type);
-                randomStr += myArray[x].ToString();
-            }
-            return randomStr;
+            stringBuilder.Append(GenerateRandomChar(type));
         }
+        
+        return stringBuilder.ToString();
+    }
 
-        /// <summary>
-        /// Generate random char sequences
-        /// </summary>
-        /// <param name="autoRand">Random generator class</param>
-        /// <returns></returns>
-        private char RandomChar(Random autoRand, CharType type)
+    /// <summary>
+    /// Generate random char sequences
+    /// </summary>
+    /// <param name="type">Type of characters to generate</param>
+    /// <returns>Random character based on type</returns>
+    private static char GenerateRandomChar(CharType type)
+    {
+        var range = type switch
         {
-            char c = '0';
-            int start, end;
-            if (type == CharType.MIX)
-            {
-                start = 1;
-                end = 4;
-            }
-            else 
-            {
-                start = 1;
-                end = 2;
-            }
-            switch (autoRand.Next(start, end))
-            {
-                case 1:
-                    c = Convert.ToChar(autoRand.Next(49, 58));
+            CharType.MIX => Random.Shared.Next(1, 4),
+            CharType.NUM => 1,
+            _ => 1
+        };
 
-                    // excluding 0
-                    break;
-                case 2:
-                    c = Convert.ToChar(autoRand.Next(65, 79));
-
-                    // excluding o
-                    break;
-                case 3:
-                    c = Convert.ToChar(autoRand.Next(80, 91));
-                    break;
-            }
-            return c;
-        }
-
-
-        /// <summary>
-        /// Generate random color
-        /// </summary>
-        /// <returns></returns>
-        private Color RandomColor()
+        return range switch
         {
-            Random rnd = new Random();
-            return Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-            //return (autoRand.Next(1, 6)) switch
-            //{
-            //    1 => Color.Crimson,
-            //    2 => Color.Sienna,
-            //    3 => Color.SeaGreen,
-            //    4 => Color.Chocolate,
-            //    5 => Color.Black,
-            //    _ => Color.Brown,
-            //};
-        }
-        /// <summary>
-        /// Transparent background, you can change it if you want something else.
-        /// </summary>
-        /// <returns>Color</returns>
-        private Color GetColor(string color)
+            1 => Convert.ToChar(Random.Shared.Next(49, 58)), // Numbers 1-9 (excluding 0)
+            2 => Convert.ToChar(Random.Shared.Next(65, 79)), // Letters A-N (excluding O)
+            3 => Convert.ToChar(Random.Shared.Next(80, 91)), // Letters P-Z
+            _ => '1'
+        };
+    }
+
+    /// <summary>
+    /// Generate random color
+    /// </summary>
+    /// <returns>Random color</returns>
+    private static Color GenerateRandomColor()
+    {
+        return Color.FromRgb(
+            (byte)Random.Shared.Next(256), 
+            (byte)Random.Shared.Next(256), 
+            (byte)Random.Shared.Next(256));
+    }
+
+    /// <summary>
+    /// Get color by name or generate random color
+    /// </summary>
+    /// <param name="color">Color name or "random"</param>
+    /// <returns>Color object</returns>
+    private static Color GetColor(string color)
+    {
+        if (color != "random" && !string.IsNullOrWhiteSpace(color))
         {
-            if (color != "random" && !string.IsNullOrWhiteSpace(color))
-                return Color.FromName(color);
-            return RandomColor();
+            // Try to parse named colors
+            return color.ToLowerInvariant() switch
+            {
+                "transparent" => Color.Transparent,
+                "white" => Color.White,
+                "black" => Color.Black,
+                "red" => Color.Red,
+                "green" => Color.Green,
+                "blue" => Color.Blue,
+                "yellow" => Color.Yellow,
+                "cyan" => Color.Cyan,
+                "magenta" => Color.Magenta,
+                "gray" => Color.Gray,
+                "grey" => Color.Gray,
+                _ => GenerateRandomColor()
+            };
         }
+        
+        return GenerateRandomColor();
+    }
 
-        /// <summary>
-        /// Generate random char sequences as a bitmap
-        /// </summary>
-        /// <param name="text">Random chars</param>
-        /// <param name="width">Width of the captcha</param>
-        /// <param name="height">Height of the captcha</param>
-        /// <param name="fontFamily">Font of the captcha</param>
-        /// <returns>Bitmap byte array</returns>
-        public byte[] CreateCAPTCHAImage(string text, string backgroundColor, string foreColor, int width = 120, int height = 40, string fontFamily = "Arial" )
+    /// <summary>
+    /// Generate random char sequences as a bitmap
+    /// </summary>
+    /// <param name="text">Random chars</param>
+    /// <param name="backgroundColor">Background color name or "random"</param>
+    /// <param name="foreColor">Foreground color name or "random"</param>
+    /// <param name="width">Width of the captcha</param>
+    /// <param name="height">Height of the captcha</param>
+    /// <param name="fontFamily">Font family name</param>
+    /// <returns>Bitmap byte array</returns>
+    public byte[] CreateCAPTCHAImage(string text, string backgroundColor, string foreColor, int width = 120, int height = 40, string fontFamily = "Arial")
+    {
+        if (string.IsNullOrEmpty(text))
+            return [];
+
+        if (text.Length > 6)
+            width += width / 4 * (text.Length - 6);
+
+        using var image = new Image<Rgba32>(width, height);
+        
+        var backgroundColor_ = GetColor(backgroundColor);
+        var foregroundColor = GetColor(foreColor);
+        
+        // Get font
+        var font = GetFont(fontFamily, 25);
+
+        image.Mutate(ctx =>
         {
-            if (string.IsNullOrEmpty(text))
-                return null;
-            if (text.Length > 6)
-                width += width / 4 * (text.Length - 6);
+            // Fill background
+            ctx.Fill(backgroundColor_);
 
+            // Add distortion lines first (behind text)
+            AddDistortionLines(ctx, width, height);
 
-            Bitmap objBitmap = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
-
-
-            Graphics objGraphics = Graphics.FromImage(objBitmap);
-            Rectangle objRectangle = new Rectangle(0, 0, width, height);
-            objGraphics.SmoothingMode = SmoothingMode.HighQuality;
-
-
-            using (SolidBrush objSolidBrush = new SolidBrush(GetColor(backgroundColor))) { objGraphics.FillRectangle(objSolidBrush, objRectangle); }
-            Font objFont = new Font(fontFamily, 25, FontStyle.Regular);
-            SizeF objSizeF = new SizeF(0, 0); SizeF objSize = new SizeF(width, height);
-
-            GraphicsPath objGraphicsPath = new GraphicsPath();
-            StringFormat objStringFormat = new StringFormat();
-            objStringFormat.Alignment = StringAlignment.Center;
-            objStringFormat.LineAlignment = StringAlignment.Center;
-            objGraphicsPath.AddString(text, objFont.FontFamily, (int)objFont.Style, objFont.Size, objRectangle, objStringFormat);
-
-
-            SolidBrush objSolidBrushColor = new SolidBrush(GetColor(foreColor));
-            objGraphics.FillPath(objSolidBrushColor, objGraphicsPath);
-            #region Distortion
-            //this code add ten random line in captcha image
-             Random rnd = new Random();
-            for (int i = 0; i < 10; i++)
+            // Draw text
+            var textOptions = new RichTextOptions(font)
             {
-                // calculate line start and end point here using the Random class:
-                int x0 = rnd.Next(0, width);
-                int y0 = rnd.Next(0, height);
-                int x1 = rnd.Next(0, width);
-                int y1 = rnd.Next(0, height);
-                objGraphics.DrawLine(Pens.Gray, x0, y0, x1, x1);
-            }
-            double distort = new Random().Next(3, 6) * (new Random().Next(3) == 1 ? 1 : -1);
-            using (Bitmap copy = (Bitmap)objBitmap.Clone())
-            {
-                for (int waveY = 0; waveY < height; waveY++)
-                {
-                    for (int waveX = 0; waveX < width; waveX++)
-                    {
-                        int newX = (int)(waveX + (distort * Math.Sin(Math.PI * waveY / 56.0)));
-                        int newY = (int)(waveY + (distort * Math.Cos(Math.PI * waveX / 44.0)));
-                        if (newX < 0 || newX >= width)
-                            newX = 0; if (newY < 0 || newY >= height) newY = 0;
-                        objBitmap.SetPixel(waveX, waveY, copy.GetPixel(newX, newY));
-                    }
-                }
-            }
-            #endregion Distortion
-            //objHttpContext.Response.ContentType = "image/png";
-            //objBitmap.Save(this.Response.OutputStream, ImageFormat.Png);
-            Byte[] data;
+                Origin = new Vector2(width / 2f, height / 2f),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
 
-            using (var memoryStream = new MemoryStream())
-            {
-                objBitmap.Save(memoryStream, ImageFormat.Png);
-                data = memoryStream.ToArray();
-            }
-            return data;
+            ctx.DrawText(textOptions, text, foregroundColor);
+
+            // Apply wave distortion
+            ApplyWaveDistortion(ctx, width, height);
+        });
+
+        // Convert to byte array
+        using var memoryStream = new MemoryStream();
+        image.Save(memoryStream, new PngEncoder());
+        return memoryStream.ToArray();
+    }
+
+    /// <summary>
+    /// Get font by family name and size
+    /// </summary>
+    /// <param name="fontFamily">Font family name</param>
+    /// <param name="size">Font size</param>
+    /// <returns>Font object</returns>
+    private static Font GetFont(string fontFamily, float size)
+    {
+        try
+        {
+            var family = SystemFonts.Get(fontFamily);
+            return family.CreateFont(size, FontStyle.Regular);
         }
+        catch
+        {
+            // Fallback to default font if requested font is not available
+            return DefaultFontFamily.CreateFont(size, FontStyle.Regular);
+        }
+    }
+
+    /// <summary>
+    /// Add random distortion lines to the image
+    /// </summary>
+    /// <param name="ctx">Image processing context</param>
+    /// <param name="width">Image width</param>
+    /// <param name="height">Image height</param>
+    private static void AddDistortionLines(IImageProcessingContext ctx, int width, int height)
+    {
+        var pen = Pens.Solid(Color.Gray, 1);
+        
+        for (int i = 0; i < 10; i++)
+        {
+            var x0 = Random.Shared.Next(0, width);
+            var y0 = Random.Shared.Next(0, height);
+            var x1 = Random.Shared.Next(0, width);
+            var y1 = Random.Shared.Next(0, height);
+            
+            ctx.DrawLine(pen, new Vector2(x0, y0), new Vector2(x1, y1));
+        }
+    }
+
+    /// <summary>
+    /// Apply wave distortion to the image
+    /// </summary>
+    /// <param name="ctx">Image processing context</param>
+    /// <param name="width">Image width</param>
+    /// <param name="height">Image height</param>
+    private static void ApplyWaveDistortion(IImageProcessingContext ctx, int width, int height)
+    {
+        var distortionStrength = Random.Shared.Next(3, 6) * (Random.Shared.Next(2) == 0 ? -1 : 1);
+        
+        // Apply a wave transformation
+        ctx.Transform(
+            new AffineTransformBuilder()
+                .PrependMatrix(Matrix3x2.CreateTranslation(-width / 2f, -height / 2f))
+                .AppendMatrix(Matrix3x2.CreateTranslation(width / 2f, height / 2f)));
+
+        // Apply subtle skew for additional distortion
+        var skewX = (float)(Random.Shared.NextDouble() * 0.2 - 0.1); // -0.1 to 0.1
+        var skewY = (float)(Random.Shared.NextDouble() * 0.2 - 0.1); // -0.1 to 0.1
+        
+        ctx.Skew(skewX, skewY);
     }
 }
