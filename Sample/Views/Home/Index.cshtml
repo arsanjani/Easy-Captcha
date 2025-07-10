@@ -1,34 +1,133 @@
-﻿@using EasyCaptcha.Controllers
-@model EasyCaptcha.Models.CaptchaModel
-@{
-    ViewData["Title"] = "Home Page";
+﻿@{
+    ViewData["Title"] = "EasyCaptcha Demo";
 }
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    <div class="form-horizontal">
-        <div class="text-center">
-            <h1 class="display-4">Easy Captcha!</h1>
-            <img id="imgCaptcha" src="~/Captcha?bc=random&l=5" alt="Captcha" style="padding-bottom:10px;cursor: pointer;" onclick="refreshImage(this);" />
-            <input type="text" asp-for="Captcha" class="form-control" placeholder="Captcha..." style="width:200px;margin:auto" />
-            <br />
-            <label>@Model.Message</label>
-            <br />
-            <input type="submit" value="Create" class="btn btn-primary" id="submit" />
+
+<div class="text-center">
+    <h1 class="display-4">EasyCaptcha Demo</h1>
+    <p>Test the cross-platform CAPTCHA service powered by ImageSharp and .NET 9</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>CAPTCHA Verification</h5>
+            </div>
+            <div class="card-body">
+                <form id="captchaForm" method="post">
+                    <div class="mb-3">
+                        <label for="captchaInput" class="form-label">Enter the text shown in the image:</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <img id="captchaImage" src="/Captcha?l=5&bc=white&fc=black&t=MIX" 
+                                 alt="CAPTCHA Image" 
+                                 class="border rounded" 
+                                 style="cursor: pointer; width: 150px; height: 50px;" 
+                                 onclick="refreshCaptcha()" 
+                                 title="Click to refresh CAPTCHA" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="refreshCaptcha()">
+                                <i class="fa fa-refresh"></i> Refresh
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Click the image to refresh the CAPTCHA</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <input type="text" id="captchaInput" name="captcha" class="form-control" 
+                               placeholder="Enter CAPTCHA text" required autocomplete="off" />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Verify CAPTCHA</button>
+                    <button type="button" class="btn btn-secondary" onclick="testDifferentConfigs()">Test Different Configs</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
         </div>
-     </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>CAPTCHA Configuration Examples</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <h6>Mixed Characters</h6>
+                        <img src="/Captcha?l=5&bc=white&fc=blue&t=MIX" alt="Mixed CAPTCHA" class="img-fluid border rounded">
+                        <small class="text-muted">Blue text on white</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <h6>Numbers Only</h6>
+                        <img src="/Captcha?l=6&bc=lightgray&fc=red&t=NUM" alt="Numeric CAPTCHA" class="img-fluid border rounded">
+                        <small class="text-muted">Red numbers on light gray</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <h6>Random Colors</h6>
+                        <img src="/Captcha?l=4&bc=random&fc=random&t=MIX" alt="Random CAPTCHA" class="img-fluid border rounded">
+                        <small class="text-muted">Random colors</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <h6>Transparent Background</h6>
+                        <img src="/Captcha?l=7&bc=transparent&fc=black&t=MIX" alt="Transparent CAPTCHA" class="img-fluid border rounded">
+                        <small class="text-muted">Transparent background</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshCaptcha() {
+    const img = document.getElementById('captchaImage');
+    const timestamp = new Date().getTime();
+    img.src = `/Captcha?l=5&bc=white&fc=black&t=MIX&_=${timestamp}`;
+}
+
+document.getElementById('captchaForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const captchaInput = document.getElementById('captchaInput').value;
+    const resultDiv = document.getElementById('result');
+    
+    fetch('/Home/VerifyCaptcha', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ captcha: captchaInput })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            resultDiv.innerHTML = '<div class="alert alert-success">✅ CAPTCHA verified successfully!</div>';
+        } else {
+            resultDiv.innerHTML = '<div class="alert alert-danger">❌ CAPTCHA verification failed. Please try again.</div>';
         }
-        <script type="text/javascript">
-            refreshImage = function (img) {
-                var source = img.src;
-                img.src = '';
+        
+        // Clear input and refresh CAPTCHA
+        document.getElementById('captchaInput').value = '';
+        refreshCaptcha();
+    })
+    .catch(error => {
+        resultDiv.innerHTML = '<div class="alert alert-danger">❌ Error occurred during verification.</div>';
+    });
+});
 
-                source = source.split('&date')[0];
-                if (source.indexOf("?") == -1)
-                    source = source + '?date=' + new Date().getTime();
-                else
-                    source = source + '&date=' + new Date().getTime();
-
-                img.src = source;
-            }
-        </script>
+function testDifferentConfigs() {
+    const configs = [
+        { l: 4, bc: 'white', fc: 'red', t: 'MIX' },
+        { l: 6, bc: 'lightblue', fc: 'darkblue', t: 'NUM' },
+        { l: 5, bc: 'random', fc: 'random', t: 'MIX' },
+        { l: 7, bc: 'transparent', fc: 'green', t: 'MIX' }
+    ];
+    
+    const config = configs[Math.floor(Math.random() * configs.length)];
+    const img = document.getElementById('captchaImage');
+    const timestamp = new Date().getTime();
+    img.src = `/Captcha?l=${config.l}&bc=${config.bc}&fc=${config.fc}&t=${config.t}&_=${timestamp}`;
+}
+</script>
